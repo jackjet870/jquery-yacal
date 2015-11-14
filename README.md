@@ -60,10 +60,57 @@ options = {
 	minDate: null,       // Sets the minimal date range (inclusive). For markup only. Default is null
 	maxDate: null,       // Sets the maximal date range (inclusive). For markup only. Default is null
 	//firstDay: 0,       // Sets the first day of the week. Default is 0 (Sunday) (TODO)
+  isActive: null,      // function to set active class name on each specific days
+  dayClass: null,      // function to adds additional custom classes to days
 });
 
 $('#aDefaultCalendar').yacal(options);
 ```
+
+
+### Helpers
+
+#### `isActive`
+isActive is a helper function you can pass in on the options that will get called for each day and passed the date. You can return true or false as to whether the date should be active or not (get the active css class applied). This is basically an enhancement of the minDate/maxDate options that lets you set the active class separately for each date, rather than just starting at minDate or ending at maxDate.
+
+It is useful to have a setting of active based on each specific day.
+
+If you do something like:
+
+```javascript
+var unavailable = [
+   { Arrival: new Date(2015, 12, 1), Departure: new Date(2015, 12, 10) },
+   { Arrival: new Date(2015, 10, 3), Departure: new Date(2015, 10, 4) }
+];
+
+$('#calendar').yacal({
+  isActive: function(date)
+  {
+    for (var i = 0; i < unavailable.length; i++) 
+    {
+      if (date.valueOf() >= unavailable[i].Arrival).valueOf() && date.valueOf() <= unavailable[i].valueOf())
+          return false;
+    }
+    return true;
+  }
+});
+```
+
+#### `dayClass`
+
+dayClass is a helper function that adds additional custom classes to days.
+
+```javascript
+$('#calendar').yacal({
+  dayClass: function(date) {
+     if (date.getDate() % 2)
+      return "odd";
+     else
+      return "even";
+  });
+});
+```
+
 
 ## CSS Styles
 
@@ -90,17 +137,16 @@ In yacal is possible to configure the resulting output. The plugin provides acce
 	...
 	<clearfix/>
 </wrap>
-``` 
+```
 
 Default templates:
-
 ```javascript
 $('.calendar').yacal({
   tpl: { 
-    day: '<a class="day d#weekday##weekend##today##selected#" href="##timestamp#">#day#</a>',
+    day: '<a class="day d#weekday##weekend##today##selected##active#" data-time="##time#">#day#</a>',
     weekday: '<i class="weekday wd#weekday#">#weekdayName#</i>',
     week: '<div class="week week#week##weekSelected#" data-time="#weekTime#">|</div>',
-    month: '<div class="month #monthNumber#"><h4>#monthName# #year#</h4>|</div>',
+    month: '<div class="month #month#"><h4>#monthName# #year#</h4>|</div>',
     nav: '<div class="yclNav">'+
            '<a class="prev"><span>#prev#</span></a>'+
            '<a class="pext"><span>#next#</span></a>'+
@@ -110,34 +156,35 @@ $('.calendar').yacal({
   }
 });
 ```
-> **Note A**: in `nav`'s template, `yclNav`, `prev` and `next` should stay within the `class` attributes of both nav links and the `yclNav` wrapper, as they are required to navigate between months. Is possible to add your own classes, but don't remove these original ones. Example:
+  > **Note A**: in `nav`'s template, `yclNav`, `prev` and `next` should stay within the `class` attributes of both nav links and the `yclNav` wrapper, as they are required to navigate between months. Is possible to add your own classes, but don't remove these original ones. 
 
-> ```javascript
-$('.calendar').yacal({
-  tpl: {
-    // adds new classes ('myNav' and 'myNext'), 
-    // but keeping the originals (`yclNav`, `prev` and `next`)
-    nav: '<div class="yclNav myNav">'+
-           '<a class="prev"><strong>#prev#</strong></a>'+ 
-           '<a class="next myNext"><strong>#next#</strong></a>'+
-         '</div>'
-  }
-});
-> ```
+  > Example:
+  ```javascript
+  $('.calendar').yacal({
+    tpl: {
+      // adds new classes ('myNav' and 'myNext'), 
+      // but keeping the originals (`yclNav`, `prev` and `next`)
+      nav: '<div class="yclNav myNav">'+
+             '<a class="prev"><strong>#prev#</strong></a>'+ 
+             '<a class="next myNext"><strong>#next#</strong></a>'+
+           '</div>'
+    }
+  });
+  ```
 
-> **Note B**: in `week`'s and `month`'s templates, there are pipe characters, `|`, that are also required. Is there where week's days will be placed. Example:
+  > **Note B**: in `week`'s and `month`'s templates, there are pipe characters, `|`, that are also required. Is there where week's days will be placed.
 
-> ```javascript
-$('.calendar').yacal({
-  tpl: {
-  	// Don't render weeks
-    week: '|',
-    // Simplifies the month header
-    month: '<div class="month"><h2>#monthName#</h2>|</div>',
-  }
-});
-> ```
-
+  > Example:
+  ```javascript
+  $('.calendar').yacal({
+    tpl: {
+      // Don't render weeks
+      week: '|',
+      // Simplifies the month header
+      month: '<div class="month"><h2>#monthName#</h2>|</div>',
+    }
+  });
+  ```
 
 #### Templates Placeholders
 

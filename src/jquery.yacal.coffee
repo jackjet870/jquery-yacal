@@ -15,7 +15,7 @@ Released under the MIT license
   "use strict"
 
   _name = 'yacal' # plugin's name
-  _version = '0.3.2'
+  _version = '0.5.0'
 
   _msInDay = 86400000 # milliseconds in a day
   _eStr = '' # empty string
@@ -25,7 +25,7 @@ Released under the MIT license
     d: '#day#'
     dc: '#dayclass#'
     dt: '#time#'
-    dw: '#dayWeek#'
+    wd: '#weekday#'
     we: '#weekend#'
     t: '#today#'
     s: '#selected#'
@@ -33,7 +33,6 @@ Released under the MIT license
     w: '#week#'
     ws: '#weekSelected#'
     wt: '#weekTime#'
-    wd: '#weekday#'
     wdn: '#weekdayName#'
     m: '#month#'
     mnam: '#monthName#'
@@ -129,7 +128,7 @@ Released under the MIT license
       renderDay = (date) ->
         _tpl.day.replace(_ph.d, date.getDate())
                 .replace(_ph.dt, +date)
-                .replace(_ph.dw, date.getDay())
+                .replace(_ph.wd, date.getDay())
                 .replace(_ph.we, if isWeekend(date) then ' weekend' else _eStr)
                 .replace(_ph.t, if isToday(date) then ' today' else _eStr)
                 .replace(_ph.s, if isSelected(date) then ' selected' else _eStr)
@@ -249,7 +248,7 @@ Released under the MIT license
     firstDay: 0
     pageSize: 1
     tpl:
-      day: tag('a','day d'+_ph.dw+''+_ph.we+''+_ph.t+''+_ph.s+''+_ph.a+''+_ph.dc,
+      day: tag('a','day d'+_ph.wd+''+_ph.we+''+_ph.t+''+_ph.s+''+_ph.a+''+_ph.dc,
                _ph.d,'time="'+_ph.dt+'"')
       weekday: tag('i','wday wd'+_ph.wd,_ph.wdn)
       week: tag('div','week w'+_ph.w+_ph.ws,'|','time="'+_ph.wt+'"')
